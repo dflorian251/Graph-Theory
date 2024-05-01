@@ -48,6 +48,11 @@ def calc_cc(network, axes):
       axes.set_title(network[1])
             
 
+def calc_closeness_centrality(network, axes):
+      closeness_centrality = nx.closeness_centrality(network[0])
+      axes.bar(closeness_centrality.keys(), closeness_centrality.values())
+      axes.set_title(network[1])
+
 fig, axs = plt.subplots(3, 2) # 3 rows and 2 columns
 fig.suptitle("Degree Distribution")
 fig2, axs2 = plt.subplots(3, 2)
@@ -56,7 +61,7 @@ row = 1
 column = 1
 for network in networks:
       calc_node_degree(network, axs[row - 1, column - 1])
-      calc_cc(network, axs2[row - 1, column - 1])
+      calc_closeness_centrality(network, axs2[row - 1, column - 1])
       print(f"{network[1]} average shortest path: {calc_avg_shortest_path(network)}")
       if column % 2 == 0:
             row += 1
