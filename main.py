@@ -68,6 +68,13 @@ def calc_eigenvector_centrality(network, axes):
       axes.set_title(network[1])
 
 
+
+def createDiagram(title):
+      fig, axs = plt.subplot(3, 2) # 3 rows and 2 columns
+      fig.suptitle(title)
+      return axs
+
+
 fig, axs = plt.subplots(3, 2) # 3 rows and 2 columns
 fig.suptitle("Degree Distribution")
 fig2, axs2 = plt.subplots(3, 2)
@@ -75,7 +82,8 @@ fig2, axs2 = plt.subplots(3, 2)
 row = 1
 column = 1
 for network in networks:
-      calc_node_degree(network, axs[row - 1, column - 1])
+      degree_districution_axs = createDiagram("Degree Distribution")
+      calc_node_degree(network, degree_districution_axs[row - 1, column - 1])
       calc_eigenvector_centrality(network, axs2[row - 1, column - 1])
       print(f"{network[1]} average shortest path: {calc_avg_shortest_path(network)}")
       if column % 2 == 0:
@@ -89,4 +97,34 @@ fig2.delaxes(axs2[2, 1])
 fig.tight_layout() # padding between the subplots
 fig2.tight_layout()
 plt.show()
+
+
+
+operation = [
+      ["Degree Distribution", calc_node_degree]
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
