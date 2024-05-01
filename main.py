@@ -28,26 +28,45 @@ networks.append(row)
 
 
 def calc_node_degree(network,axes):
-      node_degrees = nx.degree(network[0]) # calculates and the degree of each node
-      y = []
-      x = []
-      for node, degree in node_degrees:
-            x.append(node)
-            y.append(degree)
-      axes.plot(x, y)
+      degrees = dict(network[0].degree())
+      degree_values = list(degrees.values())
+      max_degree = max(degree_values)
+      bins = range(0, max_degree + 2, 1)  # Define bins from 0 to max_degree + 1
+      # Count the number of nodes in each bin
+      degree_counts = [degree_values.count(degree) for degree in bins]
+      axes.bar(bins, degree_counts, width=0.8, align='center')
       axes.set_title(network[1])
 
+def calc_avg_shortest_path(network):
+      return nx.average_shortest_path_length(network[0])
 
-fig, axs = plt.subplots(3, 2) # 3 rows, 2 columns
+def calc_cc(network, axes):
+      bins = [0.1 * i for i in range(11)] 
+      clustering_coeffs = nx.clustering(network[0])
+      cluster_coeff_counts = [sum(1 for cc in clustering_coeffs.values() if bin_val <= cc < bin_val + 0.1) for bin_val in bins]
+      axes.bar(bins, cluster_coeff_counts, width=0.1, align='edge')
+      axes.set_title(network[1])
+            
+
+fig, axs = plt.subplots(3, 2) # 3 rows and 2 columns
+fig.suptitle("Degree Distribution")
+fig2, axs2 = plt.subplots(3, 2)
+fig2.suptitle("Clustering Coefficient Distribution")
 row = 1
 column = 1
 for network in networks:
       calc_node_degree(network, axs[row - 1, column - 1])
+      calc_cc(network, axs2[row - 1, column - 1])
+      print(f"{network[1]} average shortest path: {calc_avg_shortest_path(network)}")
       if column % 2 == 0:
             row += 1
             column -= 1
       else :
             column += 1
+
+fig.delaxes(axs[2, 1])
+fig2.delaxes(axs2[2, 1])
 fig.tight_layout() # padding between the subplots
+fig2.tight_layout()
 plt.show()
 
