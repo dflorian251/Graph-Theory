@@ -37,8 +37,10 @@ def calc_node_degree(network,axes):
       axes.bar(bins, degree_counts, width=0.8, align='center')
       axes.set_title(network[1])
 
+
 def calc_avg_shortest_path(network):
       return nx.average_shortest_path_length(network[0])
+
 
 def calc_cc(network, axes):
       bins = [0.1 * i for i in range(11)] 
@@ -53,15 +55,28 @@ def calc_closeness_centrality(network, axes):
       axes.bar(closeness_centrality.keys(), closeness_centrality.values())
       axes.set_title(network[1])
 
+
+def calc_betweenness_centrality(network, axes):
+      betweenness_centrality = nx.betweenness_centrality(network[0])
+      axes.bar(betweenness_centrality.keys(), betweenness_centrality.values())
+      axes.set_title(network[1])
+
+
+def calc_eigenvector_centrality(network, axes):
+      eigenvector_centrality = nx.eigenvector_centrality(network[0], max_iter=500)
+      axes.bar(eigenvector_centrality.keys(), eigenvector_centrality.values())
+      axes.set_title(network[1])
+
+
 fig, axs = plt.subplots(3, 2) # 3 rows and 2 columns
 fig.suptitle("Degree Distribution")
 fig2, axs2 = plt.subplots(3, 2)
-fig2.suptitle("Clustering Coefficient Distribution")
+# fig2.suptitle("Clustering Coefficient Distribution")
 row = 1
 column = 1
 for network in networks:
       calc_node_degree(network, axs[row - 1, column - 1])
-      calc_closeness_centrality(network, axs2[row - 1, column - 1])
+      calc_eigenvector_centrality(network, axs2[row - 1, column - 1])
       print(f"{network[1]} average shortest path: {calc_avg_shortest_path(network)}")
       if column % 2 == 0:
             row += 1
