@@ -7,12 +7,10 @@ N = 140
 class Figure:
       def __init__(self):
             self.fig, self.axs = plt.subplots(3, 2, squeeze=False)     # 3 rows and 2 columns
-            self.fig.tight_layout()
             self.fig.delaxes(self.axs[2, 1])
             
       def plot(self):
             pass
-
 
 
 class FigureDegree(Figure):
@@ -25,9 +23,11 @@ class FigureDegree(Figure):
             bins = range(0, max_degree + 2, 1)  # Define bins from 0 to max_degree + 1
             # Count the number of nodes in each bin
             degree_counts = [degree_values.count(degree) for degree in bins]
+            self.fig.suptitle("Node Degree")
             self.axs[row, column].bar(bins, degree_counts, width=0.8, align='center')
             self.axs[row, column].set_title(title)
-
+            self.fig.tight_layout()
+            
 
 class FigureCC(Figure):
       def __init__(self):
@@ -36,10 +36,22 @@ class FigureCC(Figure):
       def plot(self, clustering_coeffs, row, column, title):
             bins = [0.1 * i for i in range(11)] 
             cluster_coeff_counts = [sum(1 for cc in clustering_coeffs.values() if bin_val <= cc < bin_val + 0.1) for bin_val in bins]
+            self.fig.suptitle("Clustering Coefficient")
             self.axs[row, column].bar(bins, cluster_coeff_counts, width=0.1, align='edge')
             self.axs[row, column].set_title(title)
+            self.fig.tight_layout()
             
 
+class FigureClosenessCentr(Figure):
+      def __init__(self):
+            super().__init__()
+
+      def plot(self, closeness_centrality, row, column, title):
+            self.fig.suptitle("Closeness Centrality")
+            self.axs[row, column].bar(closeness_centrality.keys(), closeness_centrality.values())
+            self.axs[row, column].set_title(title)
+            self.fig.tight_layout()
+            
 
 class NetworkTopology:
       def __init__(self, name, network):
@@ -51,15 +63,15 @@ class NetworkTopology:
             degrees = dict(self.network.degree())
             return degrees
             
-
       def calc_avg_shortest_path(self):
-            pass
+            return nx.average_shortest_path_length(self.network)
 
       def calc_cc(self):
             return nx.clustering(self.network)
 
       def calc_closeness_centrality(self):
-            pass
+            return nx.closeness_centrality(self.network)
+
 
       def calc_betweenness_centrality(self):
             pass
@@ -101,22 +113,28 @@ scale_free_network = ScaleFree()
 
 fig_degree = FigureDegree()
 fig_cc = FigureCC()
+fig_closeness_centr = FigureClosenessCentr()
+
 
 
 networks = [
-    [regular_network.calc_cc(), regular_network.calc_degree_distribution(), "Regular"],
-    [random_network.calc_cc(), random_network.calc_degree_distribution(), "Random"],
-    [random_geometric_network.calc_cc(), random_geometric_network.calc_degree_distribution(), "Random Geometric"],
-    [small_world_network.calc_cc(), small_world_network.calc_degree_distribution(), "Small World"],
-    [scale_free_network.calc_cc(), scale_free_network.calc_degree_distribution(), "Scale-Free"]
+    [regular_network.calc_degree_distribution(), regular_network.calc_avg_shortest_path(), regular_network.calc_cc(), regular_network.calc_closeness_centrality(), "Regular"],
+    [random_network.calc_degree_distribution(), random_network.calc_avg_shortest_path(), random_network.calc_cc(), random_network.calc_closeness_centrality(), "Random"],
+    [random_geometric_network.calc_degree_distribution(), random_geometric_network.calc_avg_shortest_path(), random_geometric_network.calc_cc(), random_geometric_network.calc_closeness_centrality(), "Random Geometric"],
+    [small_world_network.calc_degree_distribution(), small_world_network.calc_avg_shortest_path(), small_world_network.calc_cc(), small_world_network.calc_closeness_centrality(), "Small World"],
+    [scale_free_network.calc_degree_distribution(), scale_free_network.calc_avg_shortest_path(), scale_free_network.calc_cc(), scale_free_network.calc_closeness_centrality(), "Scale-Free"]
 ]
+
+
 
 
 row = 1
 column = 1
 for network in networks:
-      fig_cc.plot(network[0], row-1, column-1, network[len(network) - 1])
-      fig_degree.plot(network[1], row-1, column-1, network[len(network) - 1])
+      fig_degree.plot(network[0], row-1, column-1, network[len(network) - 1])
+      fig_cc.plot(network[2], row-1, column-1, network[len(network) - 1])
+      print(f"Average shortest path of:{network[len(network) - 1]} is {network[1]}")
+      fig_closeness_centr.plot(network[3],  row-1, column-1, network[len(network) - 1])
       if column % 2 == 0:
             row += 1
             column -= 1
