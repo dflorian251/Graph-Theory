@@ -34,7 +34,7 @@ class Figure:
             self.rows = rows
             self.columns = columns
             if self.columns == 0 :
-                  self.fig, self.axs = plt.subplots(self.rows, squeeze=False)
+                  self.fig, self.axs = plt.subplots(squeeze=False)
             else:
                   self.fig, self.axs = plt.subplots(self.rows, self.columns, squeeze=False)
                   self.fig.delaxes(self.axs[2, 1])
@@ -55,6 +55,17 @@ class FigureDegree(Figure):
             self.axs[row, column].bar(bins, degree_counts, width=0.8, align='center')
             self.axs[row, column].set_title(title)
             self.fig.tight_layout()
+
+
+class FigureShortestPath(Figure):
+
+      def plot(self, shortest_paths):
+            bins = [0.1 * i for i in range(11)] 
+            networks = ["Regular", "Random", "Random Geometric", "Small World", "Scale Free"]
+            bar_colors = ['tab:red', 'tab:blue', 'tab:red', 'tab:orange', 'tab:blue']
+            self.axs[0,0].set_title("Average Shortest Paths")
+            self.axs[0,0].set_ylabel("Hops")
+            self.axs[0,0].bar(networks, shortest_paths, color=bar_colors, align='edge')
             
 
 class FigureCC(Figure):
@@ -173,12 +184,14 @@ small_world_network = SmallWorld(4, 0.2, N)
 scale_free_network = ScaleFree(3, N)
 
 fig_degree = FigureDegree(3, 2)
+fig_avg_path = FigureShortestPath(1, 0)
 fig_cc = FigureCC(3, 2)
 fig_closeness_centr = FigureClosenessCentr(3, 2)
 fig_betweenness_centr = FigureBetweennessCentr(3, 2)
 fig_eigenvector_centr = FigureEigenvectorCentr(3, 2)
 fig_networks_diagrams = FigureDiagrams(3, 2)
 fig_connectivity_rate = FigureConnectivityRate(1, 0)
+
 
 
 networks = [
@@ -196,10 +209,11 @@ networks = [
 
 row = 1
 column = 1
+avg_paths = []
 for network in networks:
       fig_degree.plot(network[0], row-1, column-1, network[len(network) - 1])
+      avg_paths.append(network[1])
       fig_cc.plot(network[2], row-1, column-1, network[len(network) - 1])
-      print(f"Average shortest path of: {network[len(network) - 1]} is {network[1]}")
       fig_closeness_centr.plot(network[3],  row-1, column-1, network[len(network) - 1])
       fig_betweenness_centr.plot(network[4], row-1, column-1, network[len(network) - 1])
       fig_eigenvector_centr.plot(network[5], row-1, column-1, network[len(network) - 1])
@@ -211,7 +225,7 @@ for network in networks:
             column += 1
 
 
-
+fig_avg_path.plot(avg_paths)
 
 
 p = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
