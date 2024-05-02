@@ -4,18 +4,46 @@ import matplotlib.pyplot as plt
 
 N = 140
 
+def is_connected(adjlist_lines):
+    graph = {}
+    for line in adjlist_lines:
+        nodes = line.strip().split()
+        node = int(nodes[0])
+        neighbors = [int(x) for x in nodes[1:]]
+        graph[node] = neighbors
+
+    visited = set()
+
+    def dfs(node):
+        visited.add(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                dfs(neighbor)
+
+    # Start DFS from an arbitrary node
+    start_node = next(iter(graph.keys()), None)  # Get the first node, if available
+    if start_node is not None:
+        dfs(start_node)
+
+    # Check if all nodes were visited
+    return len(visited) == len(graph)
+
+
 class Figure:
-      def __init__(self):
-            self.fig, self.axs = plt.subplots(3, 2, squeeze=False)     # 3 rows and 2 columns
-            self.fig.delaxes(self.axs[2, 1])
+      def __init__(self, rows, columns):
+            self.rows = rows
+            self.columns = columns
+            if self.columns == 0 :
+                  self.fig, self.axs = plt.subplots(self.rows, squeeze=False)
+            else:
+                  self.fig, self.axs = plt.subplots(self.rows, self.columns, squeeze=False)
+                  self.fig.delaxes(self.axs[2, 1])
             
       def plot(self):
             pass
 
 
 class FigureDegree(Figure):
-      def __init__(self):
-            super().__init__()      # We should always call the parent's contructor
 
       def plot(self, degrees, row, column, title):
             degree_values = list(degrees.values())
@@ -30,8 +58,6 @@ class FigureDegree(Figure):
             
 
 class FigureCC(Figure):
-      def __init__(self):
-            super().__init__()      # We should always call the parent's contructor
 
       def plot(self, clustering_coeffs, row, column, title):
             bins = [0.1 * i for i in range(11)] 
@@ -43,8 +69,6 @@ class FigureCC(Figure):
             
 
 class FigureClosenessCentr(Figure):
-      def __init__(self):
-            super().__init__()
 
       def plot(self, closeness_centrality, row, column, title):
             self.fig.suptitle("Closeness Centrality")
@@ -54,8 +78,6 @@ class FigureClosenessCentr(Figure):
 
 
 class FigureBetweennessCentr(Figure):
-      def __init__(self):
-            super().__init__()
 
       def plot(self, betweenness_centrality, row, column, title):
             self.fig.suptitle("Betweenness Centrality")
@@ -65,8 +87,6 @@ class FigureBetweennessCentr(Figure):
 
 
 class FigureEigenvectorCentr(Figure):
-      def __init__(self):
-            super().__init__()
 
       def plot(self, eigenvector_centrality, row, column, title):
             self.fig.suptitle("Eigenvector Centrality")
@@ -76,8 +96,6 @@ class FigureEigenvectorCentr(Figure):
 
 
 class FigureDiagrams(Figure):
-      def __init__(self):
-            super().__init__()
       
       def plot(self, network, row, column, title):
             self.fig.suptitle("Networks Diagrams")
@@ -85,6 +103,15 @@ class FigureDiagrams(Figure):
             nx.draw(network, pos=pos, with_labels= True, ax= self.axs[row, column])
             self.axs[row, column].set_title(title)
             self.fig.tight_layout()
+
+
+class FigureConnectivityRate(Figure):
+
+      def plot(self, x, y):            
+            plt.plot(x, y, label="Connectivity")
+            plt.title("Connectivity Rate")
+            plt.grid()
+            plt.legend()
 
 
 class NetworkTopology:
@@ -145,12 +172,13 @@ random_geometric_network = RandomGeometric(120, 100, N)
 small_world_network = SmallWorld(4, 0.2, N)
 scale_free_network = ScaleFree(3, N)
 
-fig_degree = FigureDegree()
-fig_cc = FigureCC()
-fig_closeness_centr = FigureClosenessCentr()
-fig_betweenness_centr = FigureBetweennessCentr()
-fig_eigenvector_centr = FigureEigenvectorCentr()
-fig_networks_diagrams = FigureDiagrams()
+fig_degree = FigureDegree(3, 2)
+fig_cc = FigureCC(3, 2)
+fig_closeness_centr = FigureClosenessCentr(3, 2)
+fig_betweenness_centr = FigureBetweennessCentr(3, 2)
+fig_eigenvector_centr = FigureEigenvectorCentr(3, 2)
+fig_networks_diagrams = FigureDiagrams(3, 2)
+fig_connectivity_rate = FigureConnectivityRate(1, 0)
 
 
 networks = [
@@ -182,12 +210,21 @@ for network in networks:
       else :
             column += 1
 
-# fig, ax = plt.subplots(3, 2)
-# fig.suptitle("Network Diagrams")
-# pos = nx.circular_layout(small_world_network.network)
-# nx.draw(small_world_network.network, pos=pos, with_labels=True, ax=ax[row-1, column-1])
 
-# pos = nx.circular_layout(small_world_network.network)
-# nx.draw(scale_free_network.network, pos=pos, with_labels=True, ax=ax2, node_color="#2E8B57")
+
+
+
+p = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+connectivity = []
+for probability in p:
+      connected_graphs = 0
+      for i in range (1, 51, 1):
+            random_network = Random(probability, N)
+            if is_connected(nx.generate_adjlist(random_network.network)):
+                  connected_graphs += 1
+      connectivity.append(connected_graphs / 50)   
+
+fig_connectivity_rate.plot(p, connectivity)
+
 
 plt.show()
