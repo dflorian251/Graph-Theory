@@ -51,7 +51,29 @@ class FigureClosenessCentr(Figure):
             self.axs[row, column].bar(closeness_centrality.keys(), closeness_centrality.values())
             self.axs[row, column].set_title(title)
             self.fig.tight_layout()
-            
+
+
+class FigureBetweennessCentr(Figure):
+      def __init__(self):
+            super().__init__()
+
+      def plot(self, betweenness_centrality, row, column, title):
+            self.fig.suptitle("Betweenness Centrality")
+            self.axs[row, column].bar(betweenness_centrality.keys(), betweenness_centrality.values())
+            self.axs[row, column].set_title(title)
+            self.fig.tight_layout()      
+
+
+class FigureEigenvectorCentr(Figure):
+      def __init__(self):
+            super().__init__()
+
+      def plot(self, eigenvector_centrality, row, column, title):
+            self.fig.suptitle("Eigenvector Centrality")
+            self.axs[row, column].bar(eigenvector_centrality.keys(), eigenvector_centrality.values())
+            self.axs[row, column].set_title(title)
+            self.fig.tight_layout()  
+
 
 class NetworkTopology:
       def __init__(self, name, network):
@@ -74,11 +96,11 @@ class NetworkTopology:
 
 
       def calc_betweenness_centrality(self):
-            pass
+            return nx.betweenness_centrality(self.network)
 
       def calc_eigenvector_centrality(self):
-            pass
-
+            return nx.eigenvector_centrality(self.network, max_iter=500)
+     
 
 class Regular(NetworkTopology):
       def __init__(self):
@@ -114,16 +136,19 @@ scale_free_network = ScaleFree()
 fig_degree = FigureDegree()
 fig_cc = FigureCC()
 fig_closeness_centr = FigureClosenessCentr()
-
+fig_betweenness_centr = FigureBetweennessCentr()
+fig_eigenvector_centr = FigureEigenvectorCentr()
 
 
 networks = [
-    [regular_network.calc_degree_distribution(), regular_network.calc_avg_shortest_path(), regular_network.calc_cc(), regular_network.calc_closeness_centrality(), "Regular"],
-    [random_network.calc_degree_distribution(), random_network.calc_avg_shortest_path(), random_network.calc_cc(), random_network.calc_closeness_centrality(), "Random"],
-    [random_geometric_network.calc_degree_distribution(), random_geometric_network.calc_avg_shortest_path(), random_geometric_network.calc_cc(), random_geometric_network.calc_closeness_centrality(), "Random Geometric"],
-    [small_world_network.calc_degree_distribution(), small_world_network.calc_avg_shortest_path(), small_world_network.calc_cc(), small_world_network.calc_closeness_centrality(), "Small World"],
-    [scale_free_network.calc_degree_distribution(), scale_free_network.calc_avg_shortest_path(), scale_free_network.calc_cc(), scale_free_network.calc_closeness_centrality(), "Scale-Free"]
+    [regular_network.calc_degree_distribution(), regular_network.calc_avg_shortest_path(), regular_network.calc_cc(), regular_network.calc_closeness_centrality(), regular_network.calc_betweenness_centrality(), regular_network.calc_eigenvector_centrality(), "Regular"],
+    [random_network.calc_degree_distribution(), random_network.calc_avg_shortest_path(), random_network.calc_cc(), random_network.calc_closeness_centrality(), random_network.calc_betweenness_centrality(), random_network.calc_eigenvector_centrality(), "Random"],
+    [random_geometric_network.calc_degree_distribution(), random_geometric_network.calc_avg_shortest_path(), random_geometric_network.calc_cc(), random_geometric_network.calc_closeness_centrality(), random_geometric_network.calc_betweenness_centrality(), random_geometric_network.calc_eigenvector_centrality(), "Random Geometric"],
+    [small_world_network.calc_degree_distribution(), small_world_network.calc_avg_shortest_path(), small_world_network.calc_cc(), small_world_network.calc_closeness_centrality(), small_world_network.calc_betweenness_centrality(), small_world_network.calc_eigenvector_centrality(), "Small World"],
+    [scale_free_network.calc_degree_distribution(), scale_free_network.calc_avg_shortest_path(), scale_free_network.calc_cc(), scale_free_network.calc_closeness_centrality(), scale_free_network.calc_betweenness_centrality(), scale_free_network.calc_eigenvector_centrality(), "Scale-Free"]
 ]
+
+
 
 
 
@@ -135,6 +160,8 @@ for network in networks:
       fig_cc.plot(network[2], row-1, column-1, network[len(network) - 1])
       print(f"Average shortest path of:{network[len(network) - 1]} is {network[1]}")
       fig_closeness_centr.plot(network[3],  row-1, column-1, network[len(network) - 1])
+      fig_betweenness_centr.plot(network[4], row-1, column-1, network[len(network) - 1])
+      fig_eigenvector_centr.plot(network[5], row-1, column-1, network[len(network) - 1])
       if column % 2 == 0:
             row += 1
             column -= 1
