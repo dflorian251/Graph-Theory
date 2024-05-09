@@ -54,6 +54,8 @@ class FigureDegree(Figure):
             self.fig.suptitle("Node Degree")
             self.axs[row, column].bar(bins, degree_counts, width=0.8, align='center')
             self.axs[row, column].set_title(title)
+            self.axs[row, column].set_ylabel("Frequency")
+            self.axs[row, column].set_xlabel("Degree")
             self.fig.tight_layout()
 
 
@@ -76,6 +78,8 @@ class FigureCC(Figure):
             self.fig.suptitle("Clustering Coefficient")
             self.axs[row, column].bar(bins, cluster_coeff_counts, width=0.1, align='edge')
             self.axs[row, column].set_title(title)
+            self.axs[row, column].set_ylabel("Frequency")
+            self.axs[row, column].set_xlabel("CC")
             self.fig.tight_layout()
             
 
@@ -83,8 +87,10 @@ class FigureClosenessCentr(Figure):
 
       def plot(self, closeness_centrality, row, column, title):
             self.fig.suptitle("Closeness Centrality")
-            self.axs[row, column].bar(closeness_centrality.keys(), closeness_centrality.values())
+            self.axs[row, column].bar(closeness_centrality.values(), closeness_centrality.keys())
             self.axs[row, column].set_title(title)
+            self.axs[row, column].set_ylabel("Frequency")
+            self.axs[row, column].set_xlabel("Closeness Centrality")
             self.fig.tight_layout()
 
 
@@ -92,8 +98,10 @@ class FigureBetweennessCentr(Figure):
 
       def plot(self, betweenness_centrality, row, column, title):
             self.fig.suptitle("Betweenness Centrality")
-            self.axs[row, column].bar(betweenness_centrality.keys(), betweenness_centrality.values())
+            self.axs[row, column].bar(betweenness_centrality.values(), betweenness_centrality.keys())
             self.axs[row, column].set_title(title)
+            self.axs[row, column].set_ylabel("Frequency")
+            self.axs[row, column].set_xlabel("Betweenness Centrality")
             self.fig.tight_layout()      
 
 
@@ -101,8 +109,10 @@ class FigureEigenvectorCentr(Figure):
 
       def plot(self, eigenvector_centrality, row, column, title):
             self.fig.suptitle("Eigenvector Centrality")
-            self.axs[row, column].bar(eigenvector_centrality.keys(), eigenvector_centrality.values())
+            self.axs[row, column].bar(eigenvector_centrality.values(), eigenvector_centrality.keys())
             self.axs[row, column].set_title(title)
+            self.axs[row, column].set_ylabel("Frequency")
+            self.axs[row, column].set_xlabel("Eigenvector Centrality")
             self.fig.tight_layout()  
 
 
@@ -121,6 +131,8 @@ class FigureConnectivityRate(Figure):
       def plot(self, x, y):            
             plt.plot(x, y, label="Connectivity")
             plt.title("Connectivity Rate")
+            plt.xlabel("Connection Probability")
+            plt.ylabel("C %")
             plt.grid()
             plt.legend()
 
