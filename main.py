@@ -65,7 +65,7 @@ class FigureShortestPath(Figure):
             bar_colors = ['tab:red', 'tab:blue', 'tab:red', 'tab:orange', 'tab:blue']
             self.axs[0,0].set_title("Average Shortest Paths")
             self.axs[0,0].set_ylabel("Hops")
-            self.axs[0,0].bar(networks, shortest_paths, color=bar_colors, align='edge')
+            self.axs[0,0].bar(networks, shortest_paths, color=bar_colors, align='center')
             
 
 class FigureCC(Figure):
