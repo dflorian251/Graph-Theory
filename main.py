@@ -215,10 +215,6 @@ networks = [
 ]
 
 
-
-
-
-
 row = 1
 column = 1
 avg_paths = []
